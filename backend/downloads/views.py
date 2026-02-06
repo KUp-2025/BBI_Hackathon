@@ -15,26 +15,43 @@ def check_duplicate(request):
             status=400
         )
 
-    # Check for duplicate hash
+    # 1) Check for existing file with same hash
     existing = File.objects.filter(sha256_hash=file_hash).first()
     if existing:
         return Response({
             "duplicate": True,
             "reason": "HASH_MATCH",
-            "file_id": existing.id
+            "file_id": existing.id,
         })
 
-    # Optional: Check for size + mime match if hash is different (rare but possible)
-    existing = File.objects.filter(
+    # 2) If no existing, SAVE this file as new
+    File.objects.create(
+        file_name=filename,
         file_size=size,
-        mime_type=mime
-    ).first()
+        mime_type=mime,
+        sha256_hash=file_hash,
+        download_path="",  # optional: fill later from extension
+    )
 
-    if existing:
-        return Response({
-            "duplicate": True,
-            "reason": "SIZE_MIME_MATCH",
-            "file_id": existing.id
-        })
+    return Response({
+        "duplicate": False,
+        "reason": "NEW_FILE_SAVED"
+    })
 
-    return Response({"duplicate": False})
+
+@api_view(['GET'])
+def recent_files(request):
+    files = File.objects.order_by('-created_at')[:20]
+
+    data = [
+        {
+            "file_name": f.file_name,
+            "size": f.file_size,
+            "mime": f.mime_type,
+            "sha256_hash": f.sha256_hash,
+            "created_at": f.created_at,
+        }
+        for f in files
+    ]
+
+    return Response(data)
