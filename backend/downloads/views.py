@@ -13,17 +13,17 @@ def check_duplicate(request):
 
     print(f"🔍 [{filename}] {size} bytes")
 
-    # 1️⃣ FILENAME DUPLICATE (90% cases)
+    
     if File.objects.filter(file_name__iexact=filename).exists():
         print(f"BLOCKED: {filename}")
         return Response({"duplicate": True, "reason": "SAME_FILENAME"})
 
-    # 2️⃣ HASH DUPLICATE (future)
+   
     if File.objects.filter(sha256_hash=file_hash).exists():
         print(f"BLOCKED: hash match")
         return Response({"duplicate": True, "reason": "HASH_MATCH"})
 
-    # 3️⃣ SAVE NEW
+    
     File.objects.create(
         file_name=filename,
         file_size=size,
@@ -38,8 +38,10 @@ def check_duplicate(request):
 @api_view(['GET'])
 def recent_files(request):
     files = File.objects.order_by('-created_at')[:10]
-    return Response([{
-        "name": f.file_name,
+    data = [{
+        "file_name": f.file_name,
         "size": f.file_size,
-        "reason": f.sha256_hash[:8]
-    } for f in files])
+        "file_hash": f.sha256_hash
+    } for f in files]
+    return Response(data)
+    
