@@ -21,6 +21,10 @@ body {
       margin: 0 auto 16px;
     }
     .icon { font-size: 28px; }
+    img {
+        width: 45px;
+        height: auto;
+    }
 
     /* Headings */
     h3 { 
