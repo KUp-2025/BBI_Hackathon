@@ -15,12 +15,12 @@ def check_duplicate(request):
 
     # 1️⃣ FILENAME DUPLICATE (90% cases)
     if File.objects.filter(file_name__iexact=filename).exists():
-        print(f"✅ BLOCKED: {filename}")
+        print(f"BLOCKED: {filename}")
         return Response({"duplicate": True, "reason": "SAME_FILENAME"})
 
     # 2️⃣ HASH DUPLICATE (future)
     if File.objects.filter(sha256_hash=file_hash).exists():
-        print(f"✅ BLOCKED: hash match")
+        print(f"BLOCKED: hash match")
         return Response({"duplicate": True, "reason": "HASH_MATCH"})
 
     # 3️⃣ SAVE NEW
@@ -31,7 +31,7 @@ def check_duplicate(request):
         sha256_hash=file_hash,
         download_path=""
     )
-    print(f"➕ SAVED: {filename}")
+    print(f"SAVED: {filename}")
 
     return Response({"duplicate": False, "reason": "NEW_FILE"})
 
