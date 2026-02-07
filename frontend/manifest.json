@@ -1,22 +1,31 @@
 {
   "manifest_version": 3,
-  "name": "DDAS - Smart Download Watchdog",
-  "version": "1.0",
-  "description": "Detects duplicate downloads before they complete.",
+  "name": "BBI_DDAS",
+  "version": "2.0",
+  "description": "Prevents duplicate downloads with a smart popup interface",
+  
   "permissions": [
     "downloads",
-    "downloads.shelf",
-    "notifications",
     "storage"
   ],
+  
   "host_permissions": [
     "http://127.0.0.1:8000/*"
   ],
+  
   "background": {
     "service_worker": "background.js"
   },
+  
   "action": {
     "default_popup": "popup.html",
-    "default_title": "DDAS"
-  }
+    "default_title": "Recent Downloads"
+  },
+  
+  "web_accessible_resources": [
+    {
+      "resources": ["prompt.html", "prompt.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }
